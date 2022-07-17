@@ -1,74 +1,85 @@
-let numberOfFilms;
+/* Задание на урок:
+1) У нас уже есть рабочее приложение, состоящее из отдельных функций. Представьте, что
+перед вами стоит задача переписать его так, чтобы все функции стали методами объекта personalMovieDB
+Такое случается в реальных продуктах при смене технологий или подхода к архитектуре программы
+2) Создать метод toggleVisibleMyDB, который при вызове будет проверять свойство privat. Если оно false - он
+переключает его в true, если true - переключает в false. Протестировать вместе с showMyDB.
+3) В методе writeYourGenres запретить пользователю нажать кнопку "отмена" или оставлять пустую строку. 
+Если он это сделал - возвращать его к этому же вопросу. После того, как все жанры введены - 
+при помощи метода forEach вывести в консоль сообщения в таком виде:
+"Любимый жанр #(номер по порядку, начиная с 1) - это (название из массива)"*/
 
-function start() {
-    do {
-        numberOfFilms = +prompt('Сколько фильмов вы уже посмотрели?','19').trim();
-    } while (numberOfFilms == false || isNaN(numberOfFilms));
-        
-    
-}
+'use strict';
 
-start();
-
-const personlMovieDB = {
-    count: numberOfFilms,
+const personalMovieDB = {
+    count: 0,
     movies: {},
     actors: {},
     genres: [],
     privat: false,
-};
 
-function rememberMyFilms() {
-    let movie;
-    let rate;
-    
-    do {
-        movie = prompt('Напишите название одного из недавно просмотренных фильмов','Titanic').trim();
-    } while (!movie || movie.length > 50);
+    start: function() {
+        do {
+            personalMovieDB.count = +prompt('Сколько фильмов вы уже посмотрели?','19').trim();
+        } while (personalMovieDB.count == '' || personalMovieDB.count == null || isNaN(personalMovieDB.count));
+            
         
-    do {
-        rate = prompt('На сколько из 10 можете его оценить?','7.7').trim();
-    } while (!rate || rate.length > 50);
+    },
 
-    personlMovieDB.movies[movie] = rate;
-}
+    rememberMyFilms: function() {
+        for (let i = 0; i < 2; i++) {
+            const a = prompt('Один из последних просмотренных фильмов?', ''),
+                  b = prompt('На сколько оцените его?', '');
+        
+            if (a != null && b != null && a != '' && b != '' && a.length < 50) {
+                personalMovieDB.movies[a] = b;
+                console.log('done');
+            } else {
+                console.log('error');
+                i--;
+            }
+        }
+    },
 
-for (let i = 0; i < 2; i++) {
-    rememberMyFilms();
-}
+    detectPersonalLevel: function() {
+        if (personalMovieDB.count < 10) {
+            alert('Просмотрено довольно мало фильмов');
+        } else if (personalMovieDB.count >=10 && personalMovieDB.count < 30) {
+            alert('Вы классический зритель');
+        } else if (personalMovieDB.count >= 30) {
+            alert('Вы киноман!');
+        } else {
+            alert ('Произошла ошибка');
+        }
+    },
 
-function detectPersonalLevel() {
-    if (personlMovieDB.count < 10) {
-        alert('Просмотрено довольно мало фильмов');
-    } else if (personlMovieDB.count >=10 && personlMovieDB.count < 30) {
-        alert('Вы классический зритель');
-    } else if (personlMovieDB.count >= 30) {
-        alert('Вы киноман!');
-    } else {
-        alert ('Произошла ошибка');
-    }
-}
+    showMyDB: function() {
+        if (personalMovieDB.privat === true) {
+            console.log('Аккаунт приватный');
+        } else {
+            console.log(personalMovieDB);
+        }
+    },
 
-detectPersonalLevel();
+    writeYourGenres: function() {
+    
+        for (let i = 1; i < 2; i++) {
+            let genres = prompt(`Введите ваши любимые жанры через запятую:`,'Фентези, Хорроры, Драмы').toLowerCase();
+            if (genres === '' || genres == null) {
+                console.log('Вы ввели некорректные данные');
+                i--;
+            } else {
+                personalMovieDB.genres = genres.split(', ');
+                personalMovieDB.sort();
+            }
+        }
 
-function showMyDB() {
-    if (personlMovieDB.privat === true) {
-        console.log('Аккаунт приватный');
-    } else {
-        console.log(personlMovieDB);
-    }
-}
+        personalMovieDB.genres.forEach((element, i) => {
+            console.log(`Любимый жанр ${i + 1} - это ${element}`);
+        });
+    },
 
-showMyDB();
-
-function writeYourGenres() {
-    const repeatCount = +prompt('Сколько жанров вы хотите добавить?', '3').trim();
-
-    for (let i = 0; i < repeatCount; i++) {
-        personlMovieDB.genres[i] = prompt(`Ваш людимый жанр под номером ${i + 1}:`,'Фентези').trim();
-    }
-}
-
-writeYourGenres();
-
-console.log(personlMovieDB.movies);
+    toggleVisibleMyDB: function() {
+        personalMovieDB.privat ? personalMovieDB.privat = false : personalMovieDB.privat = true;
+    },
+};
